@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main()
+{
+    system("chcp 65001");
+    system("cls");
+    srand(time(NULL));
+    int maquina, vitoria_jogador = 0, vitoria_maquina = 0;
+    char quero, jogador, jogada_maquina;
+
+    printf("Vamos jogar pedra, papel, tesoura? S ou N\n");
+
+    scanf(" %c", &quero);
+
+    while(quero != 'S')
+    {
+        printf("N├úo seja chato, vamos jogar? S ou N\n");
+        scanf(" %c", &quero);
+    }
+
+    printf("├ôtimo, vamos jogar uma melhor de 5, quem fizer 3 pontos primeiro ganha\n");
+    system("pause");
+    system("cls");
+
+    while(vitoria_jogador < 3 && vitoria_maquina < 3)
+    {
+        printf("Digite R(rocha) ou P(papel) ou T(tesoura)\n");
+        scanf(" %c", &jogador);
+
+        while(jogador != 'R' && jogador != 'P' && jogador != 'T')
+        {
+            printf("Poxa, isso n├úo faz parte do jogo\nDigite R(rocha) ou P(papel) ou T(tesoura)\n");
+            scanf(" %c", &jogador);
+        }
+
+        // Gera um n├║mero aleat├│rio entre 1 e 3
+        maquina = rand() % 3 + 1;
+        if (maquina == 1) jogada_maquina = 'R';
+        if (maquina == 2) jogada_maquina = 'P';
+        if (maquina == 3) jogada_maquina = 'T';
+
+        if (jogador ==  'R' && jogada_maquina == 'T' || jogador == 'P' && jogada_maquina == 'R' || jogador == 'T' && jogada_maquina == 'P') vitoria_jogador++;
+        else if (jogada_maquina == 'R' && jogador == 'T' || jogada_maquina == 'P' && jogador == 'R' || jogada_maquina == 'T' && jogador == 'P') vitoria_maquina++;
+        printf("Pontua├º├úo do jogador: %d\n", vitoria_jogador);
+        printf("Pontua├º├úo do computador: %d\n", vitoria_maquina);
+    }
+    system("cls");
+    (vitoria_jogador > vitoria_maquina) ? printf("Voc├¬ ganhou de %d X %d\n", vitoria_jogador, vitoria_maquina) : printf("Voc├¬ perdeu de %d X %d\n", vitoria_jogador, vitoria_maquina);
+    return 0;
+}
