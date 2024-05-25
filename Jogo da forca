@@ -1,0 +1,204 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+
+int vidas = 6, posicao = 0; //vidas totais, posicao para letras já tentadas 
+
+char* escolherPalavra(int tipo) //escolhe uma palavra aleatoriamente 
+{
+    int indice;
+    
+    if (tipo == 1) //animais
+    {
+        char* palavras[17] = {"rato", "hamster", "gato", "pato", "bode", "boi", "bufalo", 
+        "cobra", "alce", "avestruz", "cachorro", "papagaio", "ornitorrinco", "orangotango", "feneco", "tubarao branco", "beija-flor"};
+            
+        indice = rand() % 17;
+        return palavras[indice];
+    }
+    else if (tipo == 2) //país
+    {    
+        char* palavras[17] = {"brasil", "belgica", "bermudas", "grecia", "china", "ira", 
+        "equador", "mexico", "noruega", "chile", "argentina", "franca", "egito", "mongolia", "australia", "nova zelandia", "estados unidos"};
+            
+        indice = rand() % 17;
+        return palavras[indice];
+    }
+    else if (tipo == 3)//fruta
+    {
+        char* palavras[17] = {"figo", "groselha", "jambo", "limao", "caqui", "pinha", 
+        "uva", "caju", "roma", "pera", "banana", "maca", "abacaxi", "jaca", "melao", "mamao papaia", "banana prata"};
+            
+        indice = rand() % 17;
+        return palavras[indice];
+    }
+    else if (tipo == 4) //profissões
+    {
+        char* palavras[17] = {"otorrinolaringologista", "gari", "carteiro", "uber", "engenheiro", "cinegrafista", "contador", 
+        "professor", "cardiologista", "programador", "taxista", "dentista", "ator", "medico", "biologo", "fazendeiro", "eletricista"};
+    
+        indice = rand() % 17;
+        return palavras[indice];
+    }
+    else //objtos
+    {
+        char* palavras[17] = {"relogio", "computador", "mouse", "televisao", "armario", "porta", "geladeira", 
+        "livro", "celular", "ar-condicionado", "shampoo", "escova de dentes", "controle remoto", "perfume", 
+        "ventilador", "banco", "cadeira"};
+
+        indice = rand() % 17;
+        return palavras[indice];
+    }
+}
+
+void imprimir_corpo(int partes) //mostra o bonequinho
+{
+    if (partes == 0) return;
+    if (partes == 1) printf("  O\n"); //cabeça
+    if (partes == 2) printf("  O\n  |\n"); //tronco
+    if (partes == 3) printf("  O\n/ |\n"); //braço direito
+    if (partes == 4) printf("  O\n/ | \\\n"); //braço esquerdo
+    if (partes == 5) printf("  O\n/ | \\\n /\n"); //perna direita
+    if (partes == 6) printf("  O\n/ | \\\n / \\\n"); //perna esquerda
+
+    return;
+}
+
+int tem(char chute, char palavra[], int tamanho) //vê se o usuário acertou a letra
+{
+    for (int c = 0; c < tamanho; c++) if (palavra[c] == chute) return 1;
+    return 0;
+}
+
+int ja_saiu(char chute, char letras_tentadas[]) //vê quais letras já saíram para não dar erro caso o usuário chute a mesma palavra
+{
+    for (int c = 0; c < 26; c++) if (letras_tentadas[c] == chute) return 1;
+    return 0;
+}
+
+void revelar(char usuario[], char palavra[], char chute, int tamanho)
+{
+    for (int c = 0; c < tamanho; c++)
+    {
+        if (palavra[c] == chute) usuario[c] = chute;
+        if (palavra[c] == ' ') usuario[c] = ' ';
+        if (palavra[c] == '-') usuario[c] = '-';
+    }
+    return;
+}
+
+int tela(int tamanho, char usuario[], char palavra[], char letras_tentadas[])
+{
+    int retorno = 0;
+    char chute;
+    printf("Seu chute: ");
+    scanf(" %c", &chute); //pega o chute do usuário
+
+    if (ja_saiu(chute, letras_tentadas) == 1) return 2;
+
+    if (tem(chute, palavra, tamanho) == 1)
+    {
+        revelar(usuario, palavra, chute, tamanho);
+        letras_tentadas[posicao] = chute;
+        retorno = 1;
+    }
+    else letras_tentadas[posicao] = chute;
+
+    posicao++;
+    return retorno;
+}
+
+void zerar(char vetor[], int final)
+{
+    for (int c = 0; c < final; c++) vetor[c] = '_';
+    return;
+}
+
+int descobriu(char usuario[], int tamanho)
+{
+    for (int c = 0; c < tamanho; c++)
+    {
+        if (usuario[c] == '_') return 1; // 1 se ainda tiver letra não descoberta
+    }
+
+    return 0; // 0 se tiver descoberto todas as letras
+}
+
+void imprimir_palavra(char usuario[], int tamanho, char letras_tentadas[], int controle)
+{
+    for (int c = 0; c < tamanho; c++) printf("%c ", usuario[c]);
+    printf("\n\n");
+
+    if (controle == 1) // Só executa caso o usuário tenha tentado pelo menos uma letra
+    {
+        printf("Letras já usadas: ");
+        for (int c = 0; letras_tentadas[c] != '_'; c++) printf("%c, ", letras_tentadas[c]);
+        printf("\n");
+    }
+
+    return;
+}
+
+int main()
+{
+    system("chcp 65001");
+    system("cls");
+    srand(time(NULL));
+
+    printf("========================================================================================================================\n");
+    printf("\nBem vindo ao jogo da forca, você terá 6 vidas para acertar a palavra escolhida, cada erro fará aparecer uma parte\n");
+    printf("do bonequinho e diminuirá as suas vidas em 1;\nNão terão palavras com acentos, ~ ou ç;\n");
+    printf("Todas as letras serão minúsculas;\n");
+    printf("É possível chutar a palavra toda de uma vez, mas o programa irá analisar letra a letra, tenha isso em mente;\n");
+    printf("Boa sorte!!!\n\n");
+    printf("========================================================================================================================\n\n");
+    system("pause");   
+    system("cls");
+
+    int tipo = rand() % 5 + 1;
+    char tema[13];
+
+    if (tipo == 1) strcpy(tema, "animal");
+    if (tipo == 2) strcpy(tema, "país");
+    if (tipo == 3) strcpy(tema, "fruta");
+    if (tipo == 4) strcpy(tema, "profissões");
+    if (tipo == 5) strcpy(tema, "objetos");
+
+    char* palavra = escolherPalavra(tipo);
+    int tamanho = strlen(palavra);
+    int resultado, escondido = 1, controle = 0;
+    char usuario[tamanho];
+    char letras_tentadas[26];//cabe todas as letras
+
+    zerar(usuario, tamanho);
+    zerar(letras_tentadas, 26);
+    revelar(usuario, palavra, ' ', tamanho);
+
+    while(vidas && escondido)
+    {
+        printf("tema: %s\n", tema);
+        imprimir_palavra(usuario, tamanho, letras_tentadas, controle);
+        if (vidas < 6) printf("\n ___\n");
+        imprimir_corpo(6 - vidas);
+        printf("\n\n");
+
+        resultado = tela(tamanho, usuario, palavra, letras_tentadas);
+        if (resultado == 0) vidas--;
+        else if (resultado == 1) escondido = descobriu(usuario, tamanho);
+        system("cls");
+        controle = 1;
+    }
+    
+    system("cls");
+    printf("========================================================================================================================\n");
+    if (vidas > 0) printf("\nParabéns, você ganhou, a palavra era: %s\n\n", palavra);
+    else
+    {
+        printf("\nQue pena, você perdeu, trouxa haha\nA palavra era: %s\n\n    Você me matou >:(\n", palavra);
+        imprimir_corpo(6 - vidas);
+    }
+    printf("========================================================================================================================\n");
+
+    return 0;
+}
